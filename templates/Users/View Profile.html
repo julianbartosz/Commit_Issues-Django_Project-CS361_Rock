@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+</head>
+<body>
+    <h1>User Profile</h1>
+    <div>
+        <p>Name: <span id="username">{{ user.name }}</span></p>
+        <p>Position: <span id="position">{{ user.position }}</span></p>
+        <p>Phone: <span id="phone">{{ user.phone }}</span></p>
+        <p>Email: <span id="email">{{ user.email }}</span></p>
+        <p>Address: <span id="address">{{ user.address }}</span></p>
+        <p>Office Hours: <span id="office-hours">{{ user.office_hours }}</span></p>
+    </div>
+    <div>
+        <button onclick="window.location.href='templates/Users/login.html'">Logout</button>
+        <button onclick="window.location.href='templates/Admin/Home Page.html'">Back</button>
+        <button onclick="window.location.href='templates/Users/Edit Profile.html'">Edit Information</button>
+        <!-- I added a this page b/c it made sense to view your info before you edit it-->
+    </div>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Course</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+        #submit-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+        }
+        #back-btn, #logout-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Create Course</h2>
+        <form id="course-form">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="course-number">Course Number:</label>
+            <input type="text" id="course-number" name="course-number" required>
+
+            <label for="num-lab-sections">Number of Lab Sections:</label>
+            <input type="text" id="num-lab-sections" name="num-lab-sections" required>
+
+            <label for="semester-code">Semester Code:</label>
+            <input type="text" id="semester-code" name="semester-code" required>
+
+            <button type="button" id="back-btn" onclick="window.location.href = 'templates/Admin/Home Page.html'">Back</button>
+            <button type="button" id="logout-btn" onclick="window.location.href = 'templates/Users/login.html'">Logout</button>
+            <button type="submit" id="submit-btn">Submit</button>
+        </form>
+    </div>
+</body>
+</html>
