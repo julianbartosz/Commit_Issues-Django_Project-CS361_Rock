@@ -1,0 +1,12 @@
+{% extends 'basic_generic.html' %}
+{% block title %}Lab Section Details{% endblock %}
+
+{% block content %}
+<h2>Details for Lab Section: {{ lab_section.number }}</h2>
+<p><strong>Course:</strong> {{ lab_section.course.title }}</p>
+<p><strong>Number:</strong> {{ lab_section.number }}</p>
+<p><strong>TAs:</strong> {% for ta in lab_section.tas.all %}{{ ta.username }}, {% endfor %}</p>
+<p><strong>Schedule:</strong> {{ lab_section.schedule }}</p>
+<a href="{% url 'lab_section_update' lab_section.id %}">Edit</a>
+<a href="{% url 'lab_section_delete' lab_section.id %}">Delete</a>
+{% endblock %}

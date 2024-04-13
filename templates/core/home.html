@@ -1,0 +1,54 @@
+{% extends 'basic_generic.html' %}
+
+{% block title %}Welcome to TA Scheduler{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Hero Section -->
+    <div class="jumbotron bg-white shadow-sm rounded">
+        <h1 class="display-4">Welcome to TA Scheduler</h1>
+        <p class="lead">Streamline the management of courses and lab sections effortlessly.</p>
+        {% if user.is_authenticated %}
+            <p>Hello, {{ user.get_full_name|default:user.username }}! Ready to manage your academic responsibilities?</p>
+            {% if user.role == 'Supervisor' %}
+                <a href="{% url 'course_list' %}" class="btn btn-primary btn-lg" role="button">View Courses</a>
+                <a href="{% url 'lab_section_list' %}" class="btn btn-secondary btn-lg" role="button">Lab Sections</a>
+            {% elif user.role == 'Instructor' %}
+                <a href="{% url 'course_list' %}" class="btn btn-primary btn-lg" role="button">My Courses</a>
+            {% elif user.role == 'TA' %}
+                <a href="{% url 'ta_assignments' %}" class="btn btn-primary btn-lg" role="button">My Assignments</a>
+            {% endif %}
+        {% else %}
+            <hr class="my-4">
+            <p>Sign in to access your dashboard and start managing or participating in academic activities.</p>
+            <p class="lead">
+                <a href="{% url 'login' %}" class="btn btn-primary btn-lg" role="button">Login</a>
+            </p>
+        {% endif %}
+    </div>
+
+    <!-- Info Section for General Public -->
+    {% if not user.is_authenticated %}
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">About TA Scheduler</h5>
+                    <p class="card-text">Discover how TA Scheduler helps universities streamline their course and lab section management, improving efficiency and communication across departments.</p>
+                    <a href="#" class="btn btn-outline-primary">Learn More</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Contact Us</h5>
+                    <p class="card-text">Have questions? Get in touch with our support team for assistance or more information about how we can help your institution.</p>
+                    <a href="#" class="btn btn-outline-primary">Contact Support</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

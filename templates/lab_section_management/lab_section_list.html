@@ -1,0 +1,19 @@
+{% extends 'basic_generic.html' %}
+{% block title %}Lab Sections{% endblock %}
+
+{% block content %}
+<h2>Lab Section List</h2>
+<a href="{% url 'lab_section_create' %}">Create New Lab Section</a>
+<ul>
+    {% for lab_section in lab_sections %}
+    <li>
+        {{ lab_section.course.title }} - {{ lab_section.number }} - {{ lab_section.schedule }}
+        <a href="{% url 'lab_section_detail' lab_section.id %}">View</a>
+        <a href="{% url 'lab_section_update' lab_section.id %}">Edit</a>
+        <a href="{% url 'lab_section_delete' lab_section.id %}">Delete</a>
+    </li>
+    {% empty %}
+    <li>No lab sections available.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

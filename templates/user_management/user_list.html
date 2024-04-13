@@ -1,0 +1,17 @@
+<!-- user_list.html -->
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h2>User List</h2>
+  <ul>
+    {% for user in users %}
+      <li>
+        <a href="{% url 'user_detail' pk=user.pk %}">{{ user.email }}</a>
+        - {{ user.role }}
+        - <a href="{% url 'update_user' pk=user.pk %}">Edit</a>
+      </li>
+    {% empty %}
+      <li>No users found.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
