@@ -9,14 +9,7 @@ Before you begin, make sure you have Python installed on your system. This proje
 
 ## Clone the Repository
 
-First, clone the project repository from GitHub to your local machine using the following command in your terminal (replace <url> with the actual repository URL):
-
-  ```
-  git clone [<url>](https://github.com/julianbartosz/Commit_Issues-Django_Project-CS361_Rock.git)
-  cd <Commit_Issues-Project>
-  ```
-
-Replace project-directory with the name of the folder that Git creates on your system.
+First, make sure you've cloned the project repository from GitHub to your local machine.
 
 ## Create a Virtual Environment
 
