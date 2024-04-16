@@ -15,8 +15,6 @@
                 <a href="{% url 'lab_section_list' %}" class="btn btn-secondary btn-lg" role="button">Lab Sections</a>
             {% elif user.role == 'Instructor' %}
                 <a href="{% url 'course_list' %}" class="btn btn-primary btn-lg" role="button">My Courses</a>
-            {% elif user.role == 'TA' %}
-                <a href="{% url 'ta_assignments' %}" class="btn btn-primary btn-lg" role="button">My Assignments</a>
             {% endif %}
         {% else %}
             <hr class="my-4">
