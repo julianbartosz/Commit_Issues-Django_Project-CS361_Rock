@@ -16,14 +16,8 @@ class CustomUserCreationForm(UserCreationForm):
         self.fields['role'].required = True
 
 
-class CustomUserLoginForm(AuthenticationForm):
-    class Meta:
-        model = User
-        fields = ('email', 'password')
-
-
 class CustomUserUpdateForm(UserChangeForm):
-    password = None  # Hide password field
+    password = None
 
     class Meta:
         model = User
@@ -31,7 +25,7 @@ class CustomUserUpdateForm(UserChangeForm):
 
     def __init__(self, *args, **kwargs):
         super(CustomUserUpdateForm, self).__init__(*args, **kwargs)
-        self.fields['email'].disabled = True  # Prevent changing the email
+        self.fields['email'].disabled = True
 
 
 class CustomPasswordChangeForm(forms.ModelForm):
