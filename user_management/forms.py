@@ -15,6 +15,11 @@ class CustomUserCreationForm(UserCreationForm):
         self.fields['email'].required = True
         self.fields['role'].required = True
 
+class CustomUserUpdateForm(UserChangeForm):
+    class Meta:
+        model = User
+        fields = ['email', 'first_name', 'last_name', 'phone', 'address']
+
 
 class CustomUserLoginForm(AuthenticationForm):
     class Meta:

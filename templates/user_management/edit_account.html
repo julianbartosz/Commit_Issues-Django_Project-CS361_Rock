@@ -1,0 +1,7 @@
+{% extends "basic_generic.html" %}
+<!-- user_management/edit_account.html -->
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save Changes</button>
+</form>

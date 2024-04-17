@@ -13,16 +13,17 @@ class UserCreateView(CreateView):
     template_name = 'user_management/create_user.html'
     success_url = reverse_lazy('user_management:user_list')
 
-
-class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+class EditAccountView(LoginRequiredMixin, UpdateView):
     model = User
-    form_class = CustomUserUpdateForm
-    template_name = 'user_management/update_user.html'
-    success_url = reverse_lazy('user_management:user_list')
+    fields = ['email', 'username', 'phone', 'address']  # Update with your desired fields
+    template_name = 'user_management/edit_account.html'  # Update with your template
+    success_url = reverse_lazy('home')  # Update with your success URL
+
+    def get_object(self, queryset=None):
+        return self.request.user
 
     def test_func(self):
         return self.request.user.is_superuser or self.request.user.id == self.kwargs['pk']
-
 
 class UserListView(LoginRequiredMixin, ListView):
     model = User
