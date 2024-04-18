@@ -1,0 +1,14 @@
+{% extends 'basic_generic.html' %}
+{% block title %}Course Details{% endblock %}
+
+{% block content %}
+<h2>{{ course.title }} Details</h2>
+<p><strong>Course Code:</strong> {{ course.code }}</p>
+<p><strong>Description:</strong> {{ course.description }}</p>
+<p><strong>Instructor:</strong> {{ course.instructor }}</p>
+<p><strong>TAs:</strong> {% for ta in course.tas.all %}{{ ta }}, {% endfor %}</p>
+<p><strong>Semester:</strong> {{ course.semester }}</p>
+<p><strong>Year:</strong> {{ course.year }}</p>
+<a href="{% url 'course_update' course.id %}">Edit</a>
+<a href="{% url 'course_delete' course.id %}">Delete</a>
+{% endblock %}

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Home Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f0f0;
+    }
+    .container {
+      max-width: 800px;
+      margin: 50px auto;
+      text-align: center;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      margin-top: 0;
+    }
+    .button {
+      display: inline-block;
+      width: calc(33.33% - 20px);
+      margin: 10px;
+      padding: 20px;
+      background-color: #007bff;
+      color: #fff;
+      text-decoration: none;
+      border: none;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s ease;
+    }
+    .button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Admin Home Page</h1>
+    <a class="button" href="templates/user_management/user_detail.html">View Profile</a>
+    <!-- Should the view profile page have a button to edit profile-->
+    <a class="button" href="URL Here">Send Notification</a>
+    <a class="button" href="templates/course_management/course_list.html">View Courses</a>
+    <a class="button" href="templates/lab_section_management/lab_section_list.html">View Labs</a>
+    <a class="button" href="templates/course_management/course_form.html">Create Course</a>
+    <a class="button" href="templates/user_management/user_list.html">Search Users</a>
+    <!-- We don't have a page for this currently but we might need it-->
+    <a class="button" href="templates/user_management/create_user.html">Create User</a>
+    <a class="button" href="templates/user_management/edit_account.html">Edit User</a>
+    <a class="button" href="URL Here">Delete User</a>
+    <a class="button" href="templates/Users/login.html">Logout</a>
+  </div>
+</body>
+</html>
