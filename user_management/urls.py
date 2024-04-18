@@ -9,4 +9,4 @@ urlpatterns = [
     path('', UserListView.as_view(), name='user_list'),
     path('<int:pk>/', UserDetailView.as_view(), name='user_detail'),
     path('change-password/', PasswordChangeView.as_view(), name='change_password'),
-]
+]# t

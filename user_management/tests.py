@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth import get_user_model
 from pydantic import ValidationError
 
-User = get_user_model()
+User = get_user_model() # t
 
 def get_edit_account_url(user):
     return reverse_lazy('edit_account', kwargs={'pk': user.pk})

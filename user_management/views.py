@@ -11,7 +11,7 @@ class UserCreateView(CreateView):
     model = User
     form_class = CustomUserCreationForm
     template_name = 'user_management/create_user.html'
-    success_url = reverse_lazy('user_management:user_list')
+    success_url = reverse_lazy('user_management:user_list') # t
 
 class EditAccountView(LoginRequiredMixin, UpdateView):
     model = User

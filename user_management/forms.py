@@ -28,7 +28,7 @@ class CustomUserLoginForm(AuthenticationForm):
 
 
 class CustomUserUpdateForm(UserChangeForm):
-    password = None  # Hide password field
+    password = None  # Hide password field t
 
     class Meta:
         model = User
