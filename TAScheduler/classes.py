@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import MyUser
+from TAScheduler.models import MyUser
 class Auth:
     def __init__(self, email, password):
         self.email = email

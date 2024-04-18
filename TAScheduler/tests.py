@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
-from .classes import Auth
-from .models import MyUser
+from TAScheduler.classes import Auth
+from TAScheduler.models import MyUser
 
 class AuthUserTest(TestCase):
     def setUp(self):

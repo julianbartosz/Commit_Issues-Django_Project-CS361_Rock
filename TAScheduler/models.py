@@ -4,6 +4,7 @@ class Roles(models.TextChoices):
     Instructor = "Instructor"
     TA = "TA"
 
+
 class MyUser(models.Model):
     email = models.EmailField(max_length=92,primary_key=True,unique=True)
     password = models.CharField(max_length=92)
@@ -11,3 +12,5 @@ class MyUser(models.Model):
 
     def __str__(self):
         return self.email
+
+
