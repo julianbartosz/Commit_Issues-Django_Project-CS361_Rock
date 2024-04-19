@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Courses</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <style>
+        .logout {
+            font-family: 'Arial', sans-serif;
+            position: fixed;
+            top: 10px;
+            right: 10px;
+        }
+        .account {
+            font-family: 'Arial', sans-serif;
+            position: fixed;
+            top: 10px;
+            right: 80px;
+        }
+        
+        .return {
+            font-family: 'Arial', sans-serif;
+            position: fixed;
+            top: 10px;
+            left: 10px;
+        }
+        .courses-container {
+            padding: 10px;
+            padding-right: 250px;
+            padding-bottom: 300px;
+            padding-top: 0px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            text-align: start;
+            max-width: 350px;
+            max-height: 180px;
+            width: 100%;
+            height: 80%;
+            overflow: scroll;
+        }
+        
+        body, html {
+            height: 100%;
+            width: 100%;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #6dd5ed 0%, #2193b0 100%);
+            font-size: 20px;
+            color: #333;
+        }
+        
+        h1 {
+            position: absolute;
+            padding: 0;
+            text-align: center;
+            height: 90vh;
+            font-size: 24px;
+            color: #333;
+            box-sizing: border-box;
+            width: 100%;
+        }
+        
+        table, td, th{
+            width: 163.5%;
+            border: 4px solid black;
+            margin-left: auto;
+            margin-right: auto;
+            border-radius: 4px;
+            overflow: scroll;
+            table-layout: fixed;
+            margin: 10px;
+            border-color: rgba(240, 240, 240, 0.5);
+        }
+      
+    </style>
+</head>
+        <div class="logout">
+            Logout
+        </div>
+        
+        <div class="account">
+            Account
+        </div>
+        
+        <div class="return">
+            Return
+        </div>
+        
+    <h1 id="courses-title"> Courses </h1>
+    <body>
+        
+        <div class="courses-container"> 
+        <form class="courses-view" method="post">
+            {% csrf_token %}
+            
+        <table class="table">
+             <tr>
+                <th> Course </th> <th> Instructor </th> <th> Semester</th> <th>Year</th>
+            </tr>
+            
+            {% for course in courses %}
+                <tr>
+                    <td>
+                        course.name
+                    </td>
+                    <td>
+                        course.instructor
+                    </td>
+                    <td>
+                        course.semster
+                    </td>
+                    <td>
+                        course.year
+                    </td>
+                </tr>
+                
+            {% endfor %}
+            
+        </table>
+           
+        </form>
+        </div>
+    </body>
+    
+</html>
