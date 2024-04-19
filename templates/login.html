@@ -78,14 +78,15 @@
 <body>
     <div class="login-container">
         <h2>Login Page</h2>
-        <form class="login-form">
-            <input type="text" placeholder="Username" required>
-            <input type="password" placeholder="Password" required>
+        <form class="login-form" method="post">
+            {% csrf_token %}
+            <input type="text" name="name" placeholder="E-mail" required>
+            <input type="password" name="password" placeholder="Password" required>
             <button type="submit">Login</button>
             <div class="help-links">
-                <a href="/forgot-username">Forgot Username?</a>
                 <a href="/forgot-password">Forgot Password?</a>
             </div>
+            <div> <br> {{ message }} </div> <!-- just a placeholder -->
         </form>
     </div>
 </body>
