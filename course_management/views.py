@@ -1,13 +1,35 @@
-from django.shortcuts import render
-
 # Create your views here.
 from django.shortcuts import render
-from .models import Course
+from django.views import View
 
+from TAScheduler.models import MyUser, Roles
+from course_management.models import Course
+#t
 
 # def list(request):
 #    return render(request, 'course_list.html')
+class CoursesView(View):
+    def get(self,request):
+        m = request.session["email"]
+        courses = Course.objects.all()
+        userRole = MyUser.objects.get(email=m).role
+        isAdmin = False
+        if userRole == Roles.Admin:
+            isAdmin = True
+        return render(request, "course_management/courses.html", {"courses": courses, "role": isAdmin})
 
+
+def post(self,request):
+        m = request.session["email"]
+        toDelete = request.POST.get("delete", "")
+        courses = Course.objects.all()
+        if toDelete != "":
+            Course.objects.get(courseID=toDelete).delete()
+        userRole = MyUser.objects.get(email=m).role
+        isAdmin = False
+        if userRole == Roles.Admin:
+            isAdmin = True
+        return render(request, "course_management/courses.html", {"courses": courses, "role": isAdmin})
 def add_course_view(request):
     if request.method == 'POST':
         # Assuming you have a form with fields for title, description, instructor, and requirements
@@ -20,7 +42,7 @@ def add_course_view(request):
         # Create an instance of the Course model and call the add_course method to save it to the database
         if Course.objects.filter(title=request.POST.get('title')).exists():
             # if the course already exists, do nothing
-            return render(request, 'create_course.html')
+            return render(request, 'course_management/create_course.html')
 
         Course().add_course(title=title,
                             instructor=instructor,
@@ -30,11 +52,11 @@ def add_course_view(request):
 
         # Optionally, you can redirect to a success page or render a response
         # return render(request, 'success.html')
-    return render(request, 'create_course.html')
+    return render(request, 'course_management/create_course.html')
 
 def list(request):
   # Query all courses from the database
   courses = Course.objects.all()
 
   # Pass the queried courses to the HTML template
-  return render(request, 'course_list.html', {'courses': courses})
+  return render(request, 'course_management/course_list.html', {'courses': courses})

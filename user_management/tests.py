@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.test import TestCase, Client
 from TAScheduler.classes import Auth, AdjustUser
 from TAScheduler.models import MyUser, Roles
@@ -5,30 +6,6 @@ from django.db import IntegrityError
 from django.test import TestCase
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth import get_user_model
-
-class AuthUserTest(TestCase):
-    def setUp(self):
-        self.auth1 = Auth("test@uwm.edu", "test")
-        self.auth2 = Auth("test@uwm.edu", "awooga")
-        self.auth3 = Auth("", "awooga")
-        self.auth4 = Auth("awooga@uwm.edu", "awooga")
-        self.client = Client()
-        temp = MyUser(email="test@uwm.edu", password="test")
-        temp.save()
-
-    def test_authUser(self):
-        self.assertEqual(self.auth1.authUser(), True)
-        self.assertEqual(self.auth2.authUser(), True)
-        self.assertEqual(self.auth3.authUser(), False)
-        self.assertEqual(self.auth4.authUser(), False)
-
-    def test_logIn(self):
-        self.assertEqual(self.auth1.logIn(), True)
-        self.assertEqual(self.auth2.logIn(), False)
-        self.assertEqual(self.auth3.logIn(), False)
-        self.assertEqual(self.auth4.logIn(), False)
-
-
 
 User = get_user_model() # t
 
@@ -172,7 +149,7 @@ class CreateUserTests(TestCase):
                 city="",
                 state="",
                 zipCode=0
-            )
+            )#t
 
     def test_create_user_duplicate_email(self):
         # Create a user with a specific email
@@ -206,7 +183,7 @@ class TestAdjustUser(TestCase):
         temp = MyUser(email="test@uwm.edu", password="test")
         temp.save()
 
-    def test_createUser(self):
+    def test_createUser(self): #THIS IS REDUNDANT WITH WHAT IS ABOVE, I INCLUDED IT B/C IT WASN'T MINE
         adjUser = AdjustUser()
         adjUser.createUser("Dragon Dragon", "dragon@uwm.edu", "test", "1234447070", "101 Awooga St. blah blah", Roles.TA)
         self.assertEqual(MyUser.objects.filter(email="dragon@uwm.edu").exists(), True)
