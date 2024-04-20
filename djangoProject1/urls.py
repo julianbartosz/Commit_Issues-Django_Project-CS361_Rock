@@ -16,8 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from TAScheduler.views import LogInPage, Homepage
+from TAScheduler.views import LogInPage, Homepage, CoursesView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', LogInPage.as_view()),
+    path('homepage/', Homepage.as_view()),
+    path('courses/', CoursesView.as_view())
 ]

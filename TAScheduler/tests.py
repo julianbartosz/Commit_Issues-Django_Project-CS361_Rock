@@ -1,7 +1,10 @@
 from django.test import TestCase, Client
-from TAScheduler.classes import Auth
+from TAScheduler.classes import Auth, AdjustUser
 from TAScheduler.models import MyUser, Roles
-
+from django.db import IntegrityError
+from django.test import TestCase
+from django.urls import reverse_lazy, reverse
+from django.contrib.auth import get_user_model
 
 class AuthUserTest(TestCase):
     def setUp(self):
@@ -25,11 +28,7 @@ class AuthUserTest(TestCase):
         self.assertEqual(self.auth3.logIn(), False)
         self.assertEqual(self.auth4.logIn(), False)
 
-from django.db import IntegrityError
-from django.test import TestCase
-from django.urls import reverse_lazy, reverse
-from django.contrib.auth import get_user_model
-from pydantic import ValidationError
+
 
 User = get_user_model() # t
 
@@ -201,3 +200,22 @@ class CreateUserTests(TestCase):
                 state="Another State",
                 zipCode="67890"
             )
+
+class TestAdjustUser(TestCase):
+    def setUp(self):
+        temp = MyUser(email="test@uwm.edu", password="test")
+        temp.save()
+
+    def test_createUser(self):
+        adjUser = AdjustUser()
+        adjUser.createUser("Dragon Dragon", "dragon@uwm.edu", "test", "1234447070", "101 Awooga St. blah blah", Roles.TA)
+        self.assertEqual(MyUser.objects.filter(email="dragon@uwm.edu").exists(), True)
+
+        self.assertEqual(adjUser.createUser("Test Wrong", "test@uwm.edu", "11111", "12344448080", "101 Awooga St. blah nah", Roles.Instructor), False)
+
+    def test_deleteUser(self):
+        adjUser = AdjustUser()
+        self.assertEqual(adjUser.deleteUser("test@uwm.edu"), True)
+        self.assertEqual(MyUser.objects.filter(email="test@uwm.edu").exists(), False)
+        self.assertEqual(adjUser.deleteUser("test@uwm.edu"), False)
+        self.assertEqual(adjUser.deleteUser("nonexistent@uwm.edu"), False)
