@@ -129,8 +129,11 @@
                        {{  course.year }}
 
                     </td>
+                    {% if role %}
+                    
                     <td><button type="submit" value="{{ course.courseID }}" name="delete" id="delete">Delete</button></td>
-
+                    
+                    {% endif %}
                 </tr>
 
             {% endfor %}

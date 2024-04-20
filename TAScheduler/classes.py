@@ -15,3 +15,6 @@ class Auth:
         if MyUser.objects.get(email=self.email).password != self.password:
             return False
         return True
+
+class AdjustUser:
+    pass
