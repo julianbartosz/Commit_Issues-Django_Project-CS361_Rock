@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .models import Course
+from course_management.models import Course
 # Create your tests here.
 
 
