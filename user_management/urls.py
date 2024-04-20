@@ -5,4 +5,4 @@ from user_management.views import UserCreateView, UserUpdateView
 urlpatterns = [
 path('edit-account/', UserUpdateView.as_view(), name='edit_account'),
 path('create/', UserCreateView, name='create_user')
-]
+]#t

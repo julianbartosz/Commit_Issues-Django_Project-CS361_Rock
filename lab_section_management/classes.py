@@ -17,4 +17,4 @@ class Auth:
         return True
 
 class AdjustUser:
-    pass
+    pass#t

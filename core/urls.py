@@ -4,4 +4,4 @@ from core.views import LogInPage, Homepage
 
 urlpatterns = [
 
-]
+]#t

@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
 from .models import MyUser, Course, Roles
-from .classes import Auth
+from .classes import Auth#t
 
 class LogInPage(View):
     def get(self,request):

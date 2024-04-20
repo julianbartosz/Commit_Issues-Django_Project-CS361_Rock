@@ -13,7 +13,7 @@ class UserCreateView(View):
     success_url = reverse_lazy('user_management:user_list')
 
 
-class UserUpdateView(View):
+class UserUpdateView(View):#t
     model = MyUser
     form_class = MyUserUpdateForm
     template_name = 'user_management/update_user.html'

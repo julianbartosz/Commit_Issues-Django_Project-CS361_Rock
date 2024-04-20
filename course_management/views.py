@@ -4,7 +4,7 @@ from django.views import View
 
 from TAScheduler.models import MyUser, Roles
 from course_management.models import Course
-
+#t
 
 # def list(request):
 #    return render(request, 'course_list.html')

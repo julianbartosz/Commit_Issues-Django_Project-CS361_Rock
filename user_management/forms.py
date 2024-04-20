@@ -4,7 +4,7 @@ from django.forms import forms
 from TAScheduler.models import MyUser
 
 
-class MyUserUpdateForm(UserChangeForm):
+class MyUserUpdateForm(UserChangeForm):#t
     password = None  # Hide password field
 
     class Meta:

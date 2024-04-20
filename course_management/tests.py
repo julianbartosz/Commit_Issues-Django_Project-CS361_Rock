@@ -1,6 +1,6 @@
 from django.test import TestCase
 from course_management.models import Course
-# Create your tests here.
+# Create your tests here.#t
 
 
 class CourseTestCase(TestCase):

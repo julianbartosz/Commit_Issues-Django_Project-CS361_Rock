@@ -27,3 +27,4 @@ class AuthUserTest(TestCase):
         self.assertEqual(self.auth2.logIn(), False)
         self.assertEqual(self.auth3.logIn(), False)
         self.assertEqual(self.auth4.logIn(), False)
+#t
