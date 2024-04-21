@@ -2,5 +2,5 @@ from django.apps import AppConfig
 
 
 class CourseConfig(AppConfig):
-    name = 'course'
+    name = 'course_management'
 #t

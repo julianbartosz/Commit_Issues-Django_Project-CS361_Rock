@@ -1,4 +1,4 @@
 from django.apps import AppConfig
 
-class LabSectionConig(AppConfig):
-    name = 'lab_section'#t
+class LabSectionConfig(AppConfig):
+    name = 'lab_section_management'

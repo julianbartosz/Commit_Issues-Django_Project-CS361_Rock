@@ -32,15 +32,16 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     # may have to change?
-    'course_management.apps.CourseConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'TAScheduler.apps.TASchedulerConfig',
-    "course_management.apps.CourseConfig"
+    'user_management.apps.UserConfig',
+    'course_management.apps.CourseConfig',
+    'lab_section_management.apps.LabSectionConfig',
+    'TAScheduler.apps.TASchedulerConfig'
 ]
 
 

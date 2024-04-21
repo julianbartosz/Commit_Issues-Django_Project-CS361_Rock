@@ -5,12 +5,6 @@ class Roles(models.TextChoices):
     Instructor = "Instructor"
     TA = "TA"
 
-class Semester(models.TextChoices):
-    Fall = "Fall"
-    Summer = "Summer"
-    Spring = "Spring"
-    Winter = "Winter"
-
 class MyUser(models.Model):
     email = models.EmailField(max_length=92,primary_key=True,unique=True)
     firstName = models.CharField(max_length=30)
@@ -26,24 +20,3 @@ class MyUser(models.Model):
 
     def __str__(self):
         return self.email
-
-class Course(models.Model):
-    courseID = models.IntegerField(primary_key=True, unique=True)
-    TAs = models.ManyToManyField(MyUser, related_name='ta_courses', limit_choices_to={'role':Roles.TA})
-    instructor = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='instructed_courses', limit_choices_to={'role': Roles.Instructor})
-    name = models.CharField(max_length=50)
-    department = models.CharField(max_length=20)
-    sectionNumber = models.IntegerField()
-    semester = models.CharField(max_length=6, choices=Semester.choices)
-    year = models.PositiveIntegerField(default=datetime.date.today().year)
-
-class Lab(models.Model):
-    labID = models.IntegerField(primary_key=True, unique=True)
-    labSection = models.IntegerField()
-    courseID = models.ForeignKey(Course, on_delete=models.CASCADE)
-    instructor = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='instructor_lab', limit_choices_to={'role':Roles.Instructor})
-    TA = models.ForeignKey(MyUser, on_delete=models.SET_NULL, null=True, related_name='ta_lab', limit_choices_to={'role':Roles.TA})
-   # name = str(courseID.name + " " + courseID.sectionNumber + "-" + labID)
-
-
-#t

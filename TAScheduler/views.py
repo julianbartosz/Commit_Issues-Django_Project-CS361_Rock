@@ -1,9 +1,11 @@
+
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
 
-from .forms import CreateUserForm, MyUserUpdateForm
-from .models import MyUser, Course, Roles
+from user_management.forms import CreateUserForm, MyUserUpdateForm
+from user_management.models import MyUser, Roles
+from course_management.models import Course
 from .classes import Auth
 
 class LogInPage(View):
@@ -64,5 +66,6 @@ class UserUpdateView(View):
 
     def test_func(self):
         return self.request.user.is_superuser or self.request.user.id == self.kwargs['pk']
+
 
 
