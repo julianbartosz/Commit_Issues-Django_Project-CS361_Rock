@@ -1,15 +1,11 @@
+# course_management/urls.py
 from django.urls import path
-from . import views
-from django.contrib.auth.views import LoginView, LogoutView
-from .forms import CustomAuthenticationForm
-
+from .views import CourseListView, CourseCreateView, CourseDetailView, CourseUpdateView, CourseDeleteView
 
 urlpatterns = [
-    path('', views.home, name='home'),
-    path('login/', LoginView.as_view(
-        template_name='core/login.html',
-        authentication_form=CustomAuthenticationForm
-    ), name='login'),
-    path('logout/', LogoutView.as_view(next_page='home'), name='logout'),
-    path('search_select/', views.search_select, name='search_select'),
+    path('', CourseListView.as_view(), name='course_list'),  # List view of courses
+    path('create/', CourseCreateView.as_view(), name='course_create'),  # Create a new course
+    path('<int:pk>/', CourseDetailView.as_view(), name='course_detail'),  # Detail view of a specific course
+    path('courses/<int:pk>/update/', CourseUpdateView.as_view(), name='course_update'),
+    path('courses/<int:pk>/delete/', CourseDeleteView.as_view(), name='course_delete'),
 ]
