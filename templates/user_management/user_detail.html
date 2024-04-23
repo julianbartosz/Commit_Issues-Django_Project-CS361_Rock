@@ -1,10 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'basic_generic.html' %}
 
-</body>
-</html>
+{% block title %}User Detail{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ user.get_full_name }}, {{ user.email }}</h2>
+    <div class="card">
+        <div class="card-header">
+            Profile Information
+        </div>
+        <div class="card-body">
+            <p class="card-text"><strong>Role:</strong> {{ user.get_role_display }}</p>
+            {% if request.user.is_superuser or request.user == user %}
+                <p class="card-text"><strong>Phone:</strong> {{ user.phone }}</p>
+                <p class="card-text"><strong>Address:</strong> {{ user.address }}</p>
+            {% endif %}
+            {% if user.role == 'Instructor' or user.role == 'Admin' %}
+                <p><strong>Courses:</strong></p>
+                <ul>
+                {% for course in user.taught_courses.all %}
+                    <li><a href="{% url 'course_management:course_detail' course.pk %}">{{ course.code }} {{ course.title }}</a></li>
+                {%endfor %}
+                </ul>
+            {% endif %}
+            {% if user.role == 'TA' %}
+                <p><strong>TA Assignments:</strong></p>
+                <ul>
+                {% for lab_section in user.lab_sections.all %}
+                    <li><a href="{% url 'lab_section_management:lab_section_detail' lab_section.pk %}">{{ lab_section.number }}</a> (<a href="{% url 'course_management:course_detail' lab_section.course.pk %}">{{ lab_section.course.code }} {{ lab_section.course.title }}</a>)</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,8 +1,14 @@
+{% extends 'basic_generic.html' %}
+
 {% block content %}
-  <h2>Update User</h2>
+  <h2>Update Information</h2>
   <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    {% for field in form %}
+      {% if field.name != 'role' %}
+        <p>{{ field.label_tag }} {{ field }}</p>
+      {% endif %}
+    {% endfor %}
     <button type="submit">Update</button>
   </form>
 {% endblock %}
