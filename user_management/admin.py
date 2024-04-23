@@ -57,11 +57,5 @@ class UserAdmin(BaseUserAdmin):
     ordering = ('email',)
     filter_horizontal = ()
 
-    def get_form(self, request, obj=None, **kwargs):
-        if obj is None:
-            return UserCreationForm
-        else:
-            return UserChangeForm
-
 
 admin.site.register(User, UserAdmin)

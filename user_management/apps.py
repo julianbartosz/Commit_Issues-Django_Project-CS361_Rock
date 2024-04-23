@@ -6,4 +6,4 @@ class UserManagementConfig(AppConfig):
     verbose_name = 'User Management'
 
     #def ready(self):
-        #import user_management.signals
+       # import user_management.signals
