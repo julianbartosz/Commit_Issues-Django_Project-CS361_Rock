@@ -1,116 +1,68 @@
-# Create your views here.
-from django.shortcuts import render, redirect
-from django.views import View
+from django.urls import reverse_lazy
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from .models import Course
+from .forms import CourseForm
+from lab_section_management.models import LabSection
+from django.db.models import Q
 
-from user_management.models import MyUser, Roles
-from course_management.models import Course
-#t
 
-# def list(request):
-#    return render(request, 'course_list.html')
-class CoursesView(View):
-    def get(self, request):
-        m = request.session["email"]
-        courses = Course.objects.all()
-        userRole = MyUser.objects.get(email=m).role
-        isAdmin = False
-        if userRole == Roles.Admin:
-            isAdmin = True
-        return render(request, "course_management/courses.html", {"courses": courses, "role": isAdmin})
+class CourseDetailView(LoginRequiredMixin, DetailView):
+    model = Course
+    template_name = 'course_management/course_detail.html'
+    context_object_name = 'course'
 
-    def post(self, request):
-        m = request.session["email"]
-        toDelete = request.POST.get("delete", "")
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['lab_sections'] = LabSection.objects.filter(course=self.object)
+        return context
 
-        c = request.POST.get('create', "")
-        if c == "create_redirect":
-            return redirect("/create_course/")
 
-        courses = Course.objects.all()
-        if toDelete != "":
-            Course.objects.get(courseID=toDelete).delete()
-        userRole = MyUser.objects.get(email=m).role
-        isAdmin = False
-        if userRole == Roles.Admin:
-            isAdmin = True
-        return render(request, "course_management/courses.html", {"courses": courses, "role": isAdmin})
+class CourseListView(LoginRequiredMixin, ListView):
+    model = Course
+    template_name = 'course_management/course_list.html'
+    context_object_name = 'courses'
 
-class CreateCoursesView(View):
-    def get(self, request):
-        return render(request, "course_management/create_course.html")
-    def post(self, request):
-        return render(request, "course_management/create_course.html")
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        search_query = self.request.GET.get('search', '')
+        if search_query:
+            queryset = queryset.filter(
+                Q(title__icontains=search_query) |
+                Q(code__icontains=search_query) |
+                Q(description__icontains=search_query)
+            )
+        return queryset
 
-def add_course_view(request):
-    if request.method == 'POST':
-        # Assuming you have a form with fields for title, description, instructor, and requirements
-        title = request.POST.get('title')
-        instructor = request.POST.get('instructor')
-        ta = request.POST.get('ta')
-        description = request.POST.get('description')
-        requirements = request.POST.get('requirements')
 
-        # Create an instance of the Course model and call the add_course method to save it to the database
-        if Course.objects.filter(title=request.POST.get('title')).exists():
-            # if the course already exists, do nothing
-            return render(request, 'course_management/create_course.html')
+class CourseCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    model = Course
+    form_class = CourseForm
+    template_name = 'course_management/course_form.html'
+    success_url = reverse_lazy('course_management:course_list')
 
-        # Course().add_course(title=title,
-        #                     instructor=instructor,
-        #                     ta=ta,
-        #                     description=description,
-        #                     requirements=requirements)
+    def test_func(self):
+        return self.request.user.role == 'Supervisor' or self.request.user.is_superuser
 
-        course = Course(title=title,
-                        description=description,
-                        instructor=instructor,
-                        requirements=requirements)
-        course.save()
 
-        # Optionally, you can redirect to a success page or render a response
-        # return render(request, 'success.html')
-    return render(request, 'course_management/create_course.html')
+class CourseUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Course
+    form_class = CourseForm
+    template_name = 'course_management/course_form.html'
 
-def list(request):
-  # Query all courses from the database
-  courses = Course.objects.all()
+    def get_success_url(self):
+        return reverse_lazy('course_management:course_detail', kwargs={'pk': self.object.pk})
 
-  # Pass the queried courses to the HTML template
-  return render(request, 'course_management/course_list.html', {'courses': courses})
+    def test_func(self):
+        # Allow only supervisors or superusers to update courses
+        return self.request.user.role == 'Supervisor' or self.request.user.is_superuser
 
-class CreateCoursesView(View):
-    def get(self, request):
-        return render(request, "course_management/create_course.html")
 
-    def add_course_view(request):
-        if request.method == 'POST':
-            # Assuming you have a form with fields for title, description, instructor, and requirements
-            title = request.POST.get('title')
-            instructor = request.POST.get('instructor')
-            ta = request.POST.get('ta')
-            description = request.POST.get('description')
-            requirements = request.POST.get('requirements')
+class CourseDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Course
+    template_name = 'course_management/course_confirm_delete.html'
+    success_url = reverse_lazy('course_management:course_list')
 
-            # Create an instance of the Course model and call the add_course method to save it to the database
-            if Course.objects.filter(title=request.POST.get('title')).exists():
-                # if the course already exists, do nothing
-                return render(request, 'course_management/create_course.html')
-
-            # Course().add_course(title=title,
-            #                     instructor=instructor,
-            #                     ta=ta,
-            #                     description=description,
-            #                     requirements=requirements)
-
-            course = Course(title=title,
-                            description=description,
-                            instructor=instructor,
-                            requirements=requirements)
-            course.save()
-
-            # Optionally, you can redirect to a success page or render a response
-            # return render(request, 'success.html')
-        return render(request, 'course_management/create_course.html')
-    def post(self, request):
-        add_course_view(request)
-        # return render(request, "course_management/create_course.html")
+    def test_func(self):
+        # Allow only supervisors to delete courses
+        return self.request.user.role == 'Supervisor' or self.request.user.is_superuser
