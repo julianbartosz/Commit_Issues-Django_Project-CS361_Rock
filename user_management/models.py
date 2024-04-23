@@ -1,5 +1,5 @@
 from django.db import models
-import datetime
+
 class Roles(models.TextChoices):
     Admin = "Admin"
     Instructor = "Instructor"

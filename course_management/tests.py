@@ -4,7 +4,6 @@ from course_management.models import Course
 
 
 class CourseTestCase(TestCase):
-
   def setUp(self):
     self.course = Course.objects.create(title="Math",
                                         description="math is good",
@@ -29,3 +28,4 @@ class CourseTestCase(TestCase):
                                           instructor="adas",
                                           requirements="kmvds").exists()
     self.assertTrue(course_exists)
+
