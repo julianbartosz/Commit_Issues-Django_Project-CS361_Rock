@@ -1,10 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'basic_generic.html' %}
+{% block title %}{{ lab_section.id|default:"Create" }} Lab Section{% endblock %}
 
-</body>
-</html>
+{% block content %}
+<h2>{{ lab_section.id|default:"Create" }} Lab Section</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+</form>
+{% endblock %}
