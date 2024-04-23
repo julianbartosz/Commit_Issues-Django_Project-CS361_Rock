@@ -39,17 +39,21 @@ class CoursesView(View):
         return render(request, "course_management/courses.html", {"courses": courses, "role": isAdmin})
 
 
-def post(self,request):
-        m = request.session["email"]
-        toDelete = request.POST.get("delete", "")
-        courses = Course.objects.all()
-        if toDelete != "":
-            Course.objects.get(courseID=toDelete).delete()
-        userRole = MyUser.objects.get(email=m).role
-        isAdmin = False
-        if userRole == Roles.Admin:
-            isAdmin = True
-        return render(request, "course_management/courses.html", {"courses": courses, "role": isAdmin})
+    def post(self,request):
+            k = request.POST.get("Create", "")
+            if k == "work":
+                return redirect("/create_course/")
+
+            m = request.session["email"]
+            toDelete = request.POST.get("delete", "")
+            courses = Course.objects.all()
+            if toDelete != "":
+                Course.objects.get(courseID=toDelete).delete()
+            userRole = MyUser.objects.get(email=m).role
+            isAdmin = False
+            if userRole == Roles.Admin:
+                isAdmin = True
+            return render(request, "course_management/courses.html", {"courses": courses, "role": isAdmin})
 
 class UserCreateView(View):
     model = MyUser
