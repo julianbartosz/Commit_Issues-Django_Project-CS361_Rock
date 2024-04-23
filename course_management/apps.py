@@ -1,6 +1,7 @@
+# apps.py
 from django.apps import AppConfig
 
 
-class CourseConfig(AppConfig):
+class CourseManagementConfig(AppConfig):
     name = 'course_management'
-#t
+    verbose_name = 'Course Management'
