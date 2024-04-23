@@ -1,4 +1,9 @@
 from django.apps import AppConfig
 
-class UserConfig(AppConfig):
-    name = 'user_management' #t
+
+class UserManagementConfig(AppConfig):
+    name = 'user_management'
+    verbose_name = 'User Management'
+
+    #def ready(self):
+        #import user_management.signals
