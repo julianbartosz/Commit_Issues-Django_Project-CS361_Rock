@@ -16,7 +16,7 @@ class CoursesView(View):
         isAdmin = False
         if userRole == Roles.Admin:
             isAdmin = True
-        return render(request, "course_management/courses.html", {"courses": courses, "role": isAdmin})
+        return render(request, "course_management/course_form.html", {"courses": courses, "role": isAdmin})
 
     def post(self, request):
         m = request.session["email"]
@@ -33,13 +33,13 @@ class CoursesView(View):
         isAdmin = False
         if userRole == Roles.Admin:
             isAdmin = True
-        return render(request, "course_management/courses.html", {"courses": courses, "role": isAdmin})
+        return render(request, "course_management/course_form.html", {"courses": courses, "role": isAdmin})
 
 class CreateCoursesView(View):
     def get(self, request):
-        return render(request, "course_management/create_course.html")
+        return render(request, "course_management/course_detail.html")
     def post(self, request):
-        return render(request, "course_management/create_course.html")
+        return render(request, "course_management/course_detail.html")
 
 def add_course_view(request):
     if request.method == 'POST':
@@ -53,7 +53,7 @@ def add_course_view(request):
         # Create an instance of the Course model and call the add_course method to save it to the database
         if Course.objects.filter(title=request.POST.get('title')).exists():
             # if the course already exists, do nothing
-            return render(request, 'course_management/create_course.html')
+            return render(request, 'course_management/course_detail.html')
 
         # Course().add_course(title=title,
         #                     instructor=instructor,
@@ -69,7 +69,7 @@ def add_course_view(request):
 
         # Optionally, you can redirect to a success page or render a response
         # return render(request, 'success.html')
-    return render(request, 'course_management/create_course.html')
+    return render(request, 'course_management/course_detail.html')
 
 def list(request):
   # Query all courses from the database
@@ -80,7 +80,7 @@ def list(request):
 
 class CreateCoursesView(View):
     def get(self, request):
-        return render(request, "course_management/create_course.html")
+        return render(request, "course_management/course_detail.html")
 
     def add_course_view(request):
         if request.method == 'POST':
@@ -94,7 +94,7 @@ class CreateCoursesView(View):
             # Create an instance of the Course model and call the add_course method to save it to the database
             if Course.objects.filter(title=request.POST.get('title')).exists():
                 # if the course already exists, do nothing
-                return render(request, 'course_management/create_course.html')
+                return render(request, 'course_management/course_detail.html')
 
             # Course().add_course(title=title,
             #                     instructor=instructor,
@@ -110,7 +110,7 @@ class CreateCoursesView(View):
 
             # Optionally, you can redirect to a success page or render a response
             # return render(request, 'success.html')
-        return render(request, 'course_management/create_course.html')
+        return render(request, 'course_management/course_detail.html')
     def post(self, request):
         add_course_view(request)
-        # return render(request, "course_management/create_course.html")
+        # return render(request, "course_management/course_detail.html")
