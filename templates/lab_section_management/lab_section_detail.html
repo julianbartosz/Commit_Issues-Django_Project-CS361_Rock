@@ -1,10 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'basic_generic.html' %}
+{% block title %}Lab Section Details{% endblock %}
 
-</body>
-</html>
+{% block content %}
+<h2>Details for Lab Section: {{ lab_section.number }}</h2>
+<p><strong>Course:</strong> <a href="{% url 'course_management:course_detail' lab_section.course.id %}">{{ lab_section.course.title }}</a></p>
+<p><strong>Section Number:</strong> {{ lab_section.number }}</p>
+<ul>
+{% for ta in lab_section.tas.all %}
+    <li><strong>TAs:</strong> <a href="{% url 'user_management:user_detail' ta.id %}">{{ ta.get_full_name }}</a>, <strong>Email:</strong> {{ ta.email }}</li>
+{% endfor %}
+</ul>
+{% if request.user.role == 'Supervisor' or request.user.role == 'Instructor' and lab_section.course.instructor == request.user %}
+    <a href="{% url 'lab_section_management:lab_section_update' lab_section.id %}">Edit</a>
+    <a href="{% url 'lab_section_management:lab_section_delete' lab_section.id %}">Delete</a>
+{% endif %}
+{% endblock %}

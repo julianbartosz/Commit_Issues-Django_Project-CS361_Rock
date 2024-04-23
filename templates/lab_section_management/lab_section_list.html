@@ -1,10 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'basic_generic.html' %}
 
-</body>
-</html>
+{% block content %}
+<h2>Lab Section List</h2>
+<form method="get">
+    <label>
+        <input type="text" name="search" value="{{ request.GET.search }}">
+    </label>
+    <input type="submit" value="Search">
+    <a href="{% url 'lab_section_management:lab_section_list' %}" class="button">Reset</a>
+</form>
+<ul>
+    {% for lab_section in lab_sections %}
+    <li>
+        <a href="{% url 'lab_section_management:lab_section_detail' lab_section.id %}">{{ lab_section.course.title }}</a> - {{ lab_section.number }} - {{ lab_section.schedule }}
+        {% if request.user.role == 'Supervisor' or request.user.role == 'Instructor' and lab_section.course.instructor == request.user %}
+            <a href="{% url 'lab_section_management:lab_section_update' lab_section.id %}">Edit</a>
+        {% endif %}
+        {% if request.user.role == 'Supervisor' %}
+            <a href="{% url 'lab_section_management:lab_section_delete' lab_section.id %}">Delete</a>
+        {% endif %}
+    </li>
+    {% empty %}
+    <li>No lab sections available.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

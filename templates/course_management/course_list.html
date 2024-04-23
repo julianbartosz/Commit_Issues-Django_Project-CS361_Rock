@@ -1,70 +1,26 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course List</title>
-</head>
-<body>
-    <h1>Course List</h1>
-    <ul>
-        {% for course in courses %}
-            <li>course: {{ course.title }}</li>
-            <p>Instructor:  {{ course.instructor }}</p>
-            <p>Description: {{ course.description }}</p>
-            <p>Requirements: {{ course.requirements }}</p>
-        {% endfor %}
-    </ul>
-</body>
-</html>-->
+{% extends 'basic_generic.html' %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course List</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f7f7f7;
-        }
-        h1 {
-            text-align: center;
-            margin-top: 20px;
-        }
-        ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 20px auto;
-            max-width: 600px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        li {
-            padding: 20px;
-            border-bottom: 1px solid #eee;
-        }
-        p {
-            margin: 0;
-        }
-    </style>
-</head>
-<body>
-    <h1>Course List</h1>
-    <ul>
-        {% for course in courses %}
-            <li>
-                <h2>Title: {{ course.title }}</h2>
-                <p><strong>Instructor:</strong> {{ course.instructor }}</p>
-                <p><strong>TA:</strong> {{ course.ta }}</p>
-                <p><strong>Description:</strong> {{ course.description }}</p>
-                <p><strong>Requirements:</strong> {{ course.requirements }}</p>
-            </li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
+{% block content %}
+<h2>Course List</h2>
+<form method="get">
+    <label>
+        <input type="text" name="search" value="{{ request.GET.search }}">
+    </label>
+    <input type="submit" value="Search">
+    <a href="{% url 'course_management:course_list' %}" class="button">Reset</a>
+</form>
+<ul>
+    {% for course in courses %}
+    <li>
+        <a href="{% url 'course_management:course_detail' course.id %}">{{ course.title }}</a>
+        - {{ course.instructor.get_full_name }} - ({{ course.semester }} {{ course.year }})
+        {% if request.user.role == 'Supervisor' or request.user.is_superuser %}
+            <a href="{% url 'course_management:course_update' course.id %}">Edit</a>
+            <a href="{% url 'course_management:course_delete' course.id %}">Delete</a>
+        {% endif %}
+    </li>
+    {% empty %}
+    <li>No courses available.</li>
+    {% endfor %}
+</ul>
+{% endblock %}
