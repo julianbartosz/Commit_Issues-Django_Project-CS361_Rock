@@ -1,5 +1,5 @@
 # Create your views here.
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
 
 from user_management.models import MyUser, Roles
@@ -9,7 +9,7 @@ from course_management.models import Course
 # def list(request):
 #    return render(request, 'course_list.html')
 class CoursesView(View):
-    def get(self,request):
+    def get(self, request):
         m = request.session["email"]
         courses = Course.objects.all()
         userRole = MyUser.objects.get(email=m).role
@@ -18,10 +18,14 @@ class CoursesView(View):
             isAdmin = True
         return render(request, "course_management/courses.html", {"courses": courses, "role": isAdmin})
 
-
-def post(self,request):
+    def post(self, request):
         m = request.session["email"]
         toDelete = request.POST.get("delete", "")
+
+        c = request.POST.get('create', "")
+        if c == "create_redirect":
+            return redirect("/create_course/")
+
         courses = Course.objects.all()
         if toDelete != "":
             Course.objects.get(courseID=toDelete).delete()
@@ -30,6 +34,13 @@ def post(self,request):
         if userRole == Roles.Admin:
             isAdmin = True
         return render(request, "course_management/courses.html", {"courses": courses, "role": isAdmin})
+
+class CreateCoursesView(View):
+    def get(self, request):
+        return render(request, "course_management/create_course.html")
+    def post(self, request):
+        return render(request, "course_management/create_course.html")
+
 def add_course_view(request):
     if request.method == 'POST':
         # Assuming you have a form with fields for title, description, instructor, and requirements
