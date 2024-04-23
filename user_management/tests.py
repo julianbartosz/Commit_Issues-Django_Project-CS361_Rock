@@ -1,198 +1,273 @@
+from django.test import TestCase, Client, SimpleTestCase
+from django.urls import reverse, resolve
 from django.core.exceptions import ValidationError
-from django.test import TestCase, Client
-from TAScheduler.classes import Auth, AdjustUser
-from TAScheduler.models import MyUser, Roles
-from django.db import IntegrityError
-from django.test import TestCase
-from django.urls import reverse_lazy, reverse
-from django.contrib.auth import get_user_model
+from user_management.models import User, UserManager
+from .forms import CustomUserCreationForm, CustomUserUpdateForm, CustomPasswordChangeForm, EmailForm
+from user_management.views import UserCreateView, UserUpdateView, UserListView, UserDetailView, PasswordChangeView, SendEmailView
+from django.contrib.auth import views as auth_views
+from django.contrib.admin.sites import AdminSite
+from user_management.admin import UserCreationForm, UserChangeForm, UserAdmin
 
-User = get_user_model() # t
 
-def get_edit_account_url(user):
-    return reverse_lazy('edit_account', kwargs={'pk': user.pk})
-
-class EditAccountViewTests(TestCase):
+class UserModelTest(TestCase):
     def setUp(self):
-        # Create a user
-        self.user = MyUser.objects.create(
-            email='testuser@example.com',
-            firstName='John',
-            lastName='Doe',
-            role=Roles.Instructor,
-            phoneNumber='1234567890',
-            streetAddress='123 Test St',
-            city='Test City',
-            state='Test State',
-            zipCode='12345'
+        self.user = User.objects.create_user(
+            email='testuser@test.com',
+            password='testpassword',
+            first_name='Test',
+            last_name='User',
+            role='TA'
         )
 
-        # Login the user
-        self.client.login(email=self.user.email, password='testpassword')
+    def test_create_user(self):
+        self.assertEqual(self.user.email, 'testuser@test.com')
+        self.assertEqual(self.user.first_name, 'Test')
+        self.assertEqual(self.user.last_name, 'User')
+        self.assertEqual(self.user.role, 'TA')
+        self.assertFalse(self.user.is_superuser)
 
-    def test_edit_own_account(self):
-        # Ensure the user can edit their own account
-        url = reverse('edit_account')  # Assuming the URL name is 'edit_account'
-        updated_data = {
-            'email': 'updated_email@example.com',
-            'first_name': 'Updated',
-            'last_name': 'Name',
-            'phone_number': '9999999999',
-            'street_address': '789 Updated St',
-            'city': 'Updated City',
-            'state': 'Updated State',
-            'zip_code': '54321'
-        }
+    def test_create_user_no_email(self):
+        with self.assertRaises(ValueError):
+            User.objects.create_user(email='', password='testpassword')
 
-        response = self.client.post(url, updated_data, follow=True)
-        self.assertEqual(response.status_code, 200)  # Check if update was successful
-
-        # Refresh the user object from the database
-        self.user.refresh_from_db()
-
-        # Check if the user's information has been updated
-        self.assertEqual(self.user.email, updated_data['email'])
-        self.assertEqual(self.user.firstName, updated_data['first_name'])
-        self.assertEqual(self.user.lastName, updated_data['last_name'])
-        self.assertEqual(self.user.phoneNumber, updated_data['phone_number'])
-        self.assertEqual(self.user.streetAddress, updated_data['street_address'])
-        self.assertEqual(self.user.city, updated_data['city'])
-        self.assertEqual(self.user.state, updated_data['state'])
-        self.assertEqual(self.user.zipCode, updated_data['zip_code'])
-
-    def test_edit_account_unauthenticated(self):
-        # Ensure an unauthenticated user cannot access the edit account page
-        self.client.logout()  # Logout current user
-        url = reverse('edit_account')  # Assuming the URL name is 'edit_account'
-
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 302)  # Redirect to login page
-
-    def test_edit_account_invalid_data(self):
-        # Ensure user information does not change with invalid data
-        url = reverse('edit_account')  # Assuming the URL name is 'edit_account'
-        invalid_data = {
-            'email': 'invalid_email',  # Invalid email format
-            'phone_number': 'abc123',  # Invalid phone number
-        }
-
-        response = self.client.post(url, invalid_data)
-        self.assertEqual(response.status_code, 200)  # Form should not be valid
-
-        # Refresh the user object from the database
-        self.user.refresh_from_db()
-
-        # Check if the user's information remains unchanged
-        self.assertNotEqual(self.user.email, invalid_data['email'])
-        self.assertNotEqual(self.user.phoneNumber, invalid_data['phone_number'])
-
-    def test_edit_account_blank_data(self):
-        # Ensure user information does not change with blank data
-        url = reverse('edit_account')  # Assuming the URL name is 'edit_account'
-        blank_data = {
-            'email': '',
-            'first_name': '',
-            'last_name': '',
-            'phone_number': '',
-            'street_address': '',
-            'city': '',
-            'state': '',
-            'zip_code': '',
-        }
-
-        response = self.client.post(url, blank_data)
-        self.assertEqual(response.status_code, 200)  # Form should not be valid
-
-        # Refresh the user object from the database
-        self.user.refresh_from_db()
-
-        # Check if the user's information remains unchanged
-        self.assertNotEqual(self.user.email, blank_data['email'])
-        self.assertNotEqual(self.user.firstName, blank_data['first_name'])
-        self.assertNotEqual(self.user.lastName, blank_data['last_name'])
-        self.assertNotEqual(self.user.phoneNumber, blank_data['phone_number'])
-        self.assertNotEqual(self.user.streetAddress, blank_data['street_address'])
-        self.assertNotEqual(self.user.city, blank_data['city'])
-        self.assertNotEqual(self.user.state, blank_data['state'])
-        self.assertNotEqual(self.user.zipCode, blank_data['zip_code'])
-class CreateUserTests(TestCase):
-    def test_create_user_success(self):
-        # Attempt to create a user with valid data
-        user = MyUser.objects.create(
-            email="test@example.com",
-            firstName="Test",
-            lastName="User",
-            role=Roles.Instructor,
-            phoneNumber="1234567890",
-            streetAddress="123 Test St",
-            city="Test City",
-            state="Test State",
-            zipCode="12345"
+    def test_create_superuser(self):
+        superuser = User.objects.create_superuser(
+            email='superuser@test.com',
+            password='testpassword'
         )
-        self.assertEqual(user.email, "test@example.com")
-        self.assertEqual(user.firstName, "Test")
-        self.assertEqual(user.lastName, "User")
-        self.assertEqual(user.role, Roles.Instructor)
-        self.assertEqual(user.phoneNumber, "1234567890")
-        self.assertEqual(user.streetAddress, "123 Test St")
+        self.assertEqual(superuser.email, 'superuser@test.com')
+        self.assertTrue(superuser.is_superuser)
 
-    def test_create_user_invalid_information(self):
-        # Attempt to create a user with invalid information
-        with self.assertRaises(ValidationError):
-            MyUser.objects.create(
-                email="",
-                firstName="",
-                lastName="",
-                role="",
-                phoneNumber=0,
-                streetAddress="",
-                city="",
-                state="",
-                zipCode=0
-            )#t
-
-    def test_create_user_duplicate_email(self):
-        # Create a user with a specific email
-        MyUser.objects.create(
-            email="unique@example.com",
-            firstName="Unique",
-            lastName="User",
-            role=Roles.TA,
-            phoneNumber="1234567890",
-            streetAddress="456 Unique St",
-            city="Unique City",
-            state="Unique State",
-            zipCode="54321"
-        )
-        # Attempt to create another user with the same email
-        with self.assertRaises(IntegrityError):
-            MyUser.objects.create(
-                email="unique@example.com",
-                firstName="Another",
-                lastName="User",
-                role=Roles.TA,
-                phoneNumber="9876543210",
-                streetAddress="789 Another St",
-                city="Another City",
-                state="Another State",
-                zipCode="67890"
+    def test_create_superuser_no_is_superuser(self):
+        with self.assertRaises(ValueError):
+            User.objects.create_superuser(
+                email='superuser@test.com',
+                password='testpassword',
+                is_superuser=False
             )
 
-class TestAdjustUser(TestCase):
+    def test_get_full_name(self):
+        self.assertEqual(self.user.get_full_name(), 'Test User')
+
+    def test_get_short_name(self):
+        self.assertEqual(self.user.get_short_name(), 'Test')
+
+    def test_is_staff(self):
+        self.assertFalse(self.user.is_staff)
+
+    def test_has_perm(self):
+        self.assertFalse(self.user.has_perm('some_permission'))
+
+    def test_has_module_perms(self):
+        self.assertFalse(self.user.has_module_perms('some_app_label'))
+
+
+class UserViewTest(TestCase):
     def setUp(self):
-        temp = MyUser(email="test@uwm.edu", password="test")
-        temp.save()
+        self.client = Client()
+        self.user = User.objects.create_user(
+            email='testuser@test.com',
+            password='testpassword',
+            first_name='Test',
+            last_name='User',
+            role='TA'
+        )
 
-    def test_createUser(self): #THIS IS REDUNDANT WITH WHAT IS ABOVE, I INCLUDED IT B/C IT WASN'T MINE
-        adjUser = AdjustUser()
-        adjUser.createUser("Dragon Dragon", "dragon@uwm.edu", "test", "1234447070", "101 Awooga St. blah blah", Roles.TA)
-        self.assertEqual(MyUser.objects.filter(email="dragon@uwm.edu").exists(), True)
+    def test_user_create_view(self):
+        self.client.login(email='testuser@test.com', password='testpassword')
+        response = self.client.get(reverse('user_management:create_user'))
+        self.assertEqual(response.status_code, 200)
 
-        self.assertEqual(adjUser.createUser("Test Wrong", "test@uwm.edu", "11111", "12344448080", "101 Awooga St. blah nah", Roles.Instructor), False)
+    def test_user_update_view(self):
+        self.client.login(email='testuser@test.com', password='testpassword')
+        response = self.client.get(reverse('user_management:update_user', args=[self.user.id]))
+        self.assertEqual(response.status_code, 200)
 
-    def test_deleteUser(self):
-        adjUser = AdjustUser()
-        self.assertEqual(adjUser.deleteUser("test@uwm.edu"), True)
-        self.assertEqual(MyUser.objects.filter(email="test@uwm.edu").exists(), False)
-        self.assertEqual(adjUser.deleteUser("test@uwm.edu"), False)
-        self.assertEqual(adjUser.deleteUser("nonexistent@uwm.edu"), False)
+    def test_user_list_view(self):
+        self.client.login(email='testuser@test.com', password='testpassword')
+        response = self.client.get(reverse('user_management:user_list'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_user_detail_view(self):
+        self.client.login(email='testuser@test.com', password='testpassword')
+        response = self.client.get(reverse('user_management:user_detail', args=[self.user.id]))
+        self.assertEqual(response.status_code, 200)
+
+    def test_password_change_view(self):
+        self.client.login(email='testuser@test.com', password='testpassword')
+        response = self.client.get(reverse('user_management:change_password'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_send_email_view(self):
+        self.client.login(email='testuser@test.com', password='testpassword')
+        response = self.client.get(reverse('user_management:send_email'))
+        self.assertEqual(response.status_code, 200)
+
+
+class UserFormTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            email='testuser@test.com',
+            password='testpassword',
+            first_name='Test',
+            last_name='User',
+            role='TA'
+        )
+
+    def test_custom_user_creation_form(self):
+        form = CustomUserCreationForm(data={
+            'email': 'newuser@test.com',
+            'password1': '938efh93efh',
+            'password2': '938efh93efh',
+            'first_name': 'New',
+            'last_name': 'User',
+            'role': 'TA'
+        })
+        if not form.is_valid():
+            print(form.errors)
+        self.assertTrue(form.is_valid())
+
+    def test_custom_user_update_form(self):
+        form = CustomUserUpdateForm(instance=self.user, data={
+            'email': 'updateduser@test.com',
+            'first_name': 'Updated',
+            'last_name': 'User',
+            'role': 'TA'
+        })
+        self.assertTrue(form.is_valid())
+
+    def test_custom_password_change_form(self):
+        form = CustomPasswordChangeForm(instance=self.user, data={
+            'old_password': 'testpassword',
+            'new_password': 'newpassword',
+            'confirm_password': 'newpassword'
+        })
+        self.assertTrue(form.is_valid())
+
+    def test_email_form(self):
+        form = EmailForm(data={
+            'subject': 'Test Subject',
+            'message': 'Test Message',
+            'recipient': 'recipient@test.com'
+        })
+        self.assertTrue(form.is_valid())
+
+
+class UserURLTest(SimpleTestCase):
+    def test_create_user_url_resolves(self):
+        url = reverse('user_management:create_user')
+        self.assertEqual(resolve(url).func.view_class, UserCreateView)
+
+    def test_update_user_url_resolves(self):
+        url = reverse('user_management:update_user', args=[1])
+        self.assertEqual(resolve(url).func.view_class, UserUpdateView)
+
+    def test_user_list_url_resolves(self):
+        url = reverse('user_management:user_list')
+        self.assertEqual(resolve(url).func.view_class, UserListView)
+
+    def test_user_detail_url_resolves(self):
+        url = reverse('user_management:user_detail', args=[1])
+        self.assertEqual(resolve(url).func.view_class, UserDetailView)
+
+    def test_change_password_url_resolves(self):
+        url = reverse('user_management:change_password')
+        self.assertEqual(resolve(url).func.view_class, PasswordChangeView)
+
+    def test_password_reset_url_resolves(self):
+        url = reverse('user_management:password_reset')
+        self.assertEqual(resolve(url).func.view_class, auth_views.PasswordResetView)
+
+    def test_password_reset_done_url_resolves(self):
+        url = reverse('user_management:password_reset_done')
+        self.assertEqual(resolve(url).func.view_class, auth_views.PasswordResetDoneView)
+
+    def test_password_reset_confirm_url_resolves(self):
+        url = reverse('user_management:password_reset_confirm', args=['uidb64', 'token'])
+        self.assertEqual(resolve(url).func.view_class, auth_views.PasswordResetConfirmView)
+
+    def test_password_reset_complete_url_resolves(self):
+        url = reverse('user_management:password_reset_complete')
+        self.assertEqual(resolve(url).func.view_class, auth_views.PasswordResetCompleteView)
+
+    def test_send_email_url_resolves(self):
+        url = reverse('user_management:send_email')
+        self.assertEqual(resolve(url).func.view_class, SendEmailView)
+
+
+class MockRequest:
+    pass
+
+
+request = MockRequest()
+
+
+class UserCreationFormTest(TestCase):
+    def test_form_with_valid_data(self):
+        form = UserCreationForm(data={
+            'email': 'test@test.com',
+            'first_name': 'Test',
+            'last_name': 'User',
+            'role': 'TA',
+            'phone': '1234567890',
+            'address': 'Test Address',
+            'password1': 'testpassword',
+            'password2': 'testpassword'
+        })
+        self.assertTrue(form.is_valid())
+
+    def test_form_with_mismatched_passwords(self):
+        form = UserCreationForm(data={
+            'email': 'test@test.com',
+            'first_name': 'Test',
+            'last_name': 'User',
+            'role': 'TA',
+            'phone': '1234567890',
+            'address': 'Test Address',
+            'password1': 'testpassword',
+            'password2': 'wrongpassword'
+        })
+        self.assertFalse(form.is_valid())
+
+    def test_form_with_missing_fields(self):
+        form = UserCreationForm(data={})
+        self.assertFalse(form.is_valid())
+
+
+class UserChangeFormTest(TestCase):
+    def test_form_with_valid_data(self):
+        user = User.objects.create(email='test@test.com', password='testpassword')
+        form = UserChangeForm(instance=user, data={
+            'email': 'test@test.com',
+            'first_name': 'Test',
+            'last_name': 'User',
+            'is_active': True,
+            'is_superuser': False,
+            'role': 'TA',
+            'phone': '1234567890',
+            'address': 'Test Address'
+        })
+        self.assertTrue(form.is_valid())
+
+    def test_form_with_missing_fields(self):
+        user = User.objects.create(email='test@test.com', password='testpassword')
+        form = UserChangeForm(instance=user, data={})
+        self.assertFalse(form.is_valid())
+
+
+class UserAdminTest(TestCase):
+    def setUp(self):
+        self.site = AdminSite()
+        self.admin = UserAdmin(User, self.site)
+
+    def test_add_form(self):
+        self.assertEqual(self.admin.get_form(request), UserCreationForm)
+
+    def test_change_form(self):
+        self.assertEqual(self.admin.get_form(request, obj=User()), UserChangeForm)
+
+    def test_list_display(self):
+        self.assertEqual(self.admin.get_list_display(request), ('email', 'first_name', 'last_name', 'role', 'is_active'))
+
+    def test_search_fields(self):
+        self.assertEqual(self.admin.get_search_fields(request), ('email', 'first_name', 'last_name'))
