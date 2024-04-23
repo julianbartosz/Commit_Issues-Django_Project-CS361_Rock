@@ -55,11 +55,17 @@ def add_course_view(request):
             # if the course already exists, do nothing
             return render(request, 'course_management/create_course.html')
 
-        Course().add_course(title=title,
-                            instructor=instructor,
-                            ta=ta,
-                            description=description,
-                            requirements=requirements)
+        # Course().add_course(title=title,
+        #                     instructor=instructor,
+        #                     ta=ta,
+        #                     description=description,
+        #                     requirements=requirements)
+
+        course = Course(title=title,
+                        description=description,
+                        instructor=instructor,
+                        requirements=requirements)
+        course.save()
 
         # Optionally, you can redirect to a success page or render a response
         # return render(request, 'success.html')
@@ -71,3 +77,40 @@ def list(request):
 
   # Pass the queried courses to the HTML template
   return render(request, 'course_management/course_list.html', {'courses': courses})
+
+class CreateCoursesView(View):
+    def get(self, request):
+        return render(request, "course_management/create_course.html")
+
+    def add_course_view(request):
+        if request.method == 'POST':
+            # Assuming you have a form with fields for title, description, instructor, and requirements
+            title = request.POST.get('title')
+            instructor = request.POST.get('instructor')
+            ta = request.POST.get('ta')
+            description = request.POST.get('description')
+            requirements = request.POST.get('requirements')
+
+            # Create an instance of the Course model and call the add_course method to save it to the database
+            if Course.objects.filter(title=request.POST.get('title')).exists():
+                # if the course already exists, do nothing
+                return render(request, 'course_management/create_course.html')
+
+            # Course().add_course(title=title,
+            #                     instructor=instructor,
+            #                     ta=ta,
+            #                     description=description,
+            #                     requirements=requirements)
+
+            course = Course(title=title,
+                            description=description,
+                            instructor=instructor,
+                            requirements=requirements)
+            course.save()
+
+            # Optionally, you can redirect to a success page or render a response
+            # return render(request, 'success.html')
+        return render(request, 'course_management/create_course.html')
+    def post(self, request):
+        add_course_view(request)
+        # return render(request, "course_management/create_course.html")
