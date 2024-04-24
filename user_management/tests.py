@@ -2,11 +2,13 @@ from django.test import TestCase, Client, SimpleTestCase
 from django.urls import reverse, resolve
 from django.core.exceptions import ValidationError
 from user_management.models import User, UserManager
-from .forms import CustomUserCreationForm, CustomUserUpdateForm, CustomPasswordChangeForm, EmailForm
+from user_management.forms import CustomUserCreationForm, CustomUserUpdateForm, CustomPasswordChangeForm, EmailForm
 from user_management.views import UserCreateView, UserUpdateView, UserListView, UserDetailView, PasswordChangeView, SendEmailView
 from django.contrib.auth import views as auth_views
 from django.contrib.admin.sites import AdminSite
 from user_management.admin import UserCreationForm, UserChangeForm, UserAdmin
+
+#UNIT TESTS
 
 
 class UserModelTest(TestCase):
@@ -60,48 +62,6 @@ class UserModelTest(TestCase):
 
     def test_has_module_perms(self):
         self.assertFalse(self.user.has_module_perms('some_app_label'))
-
-
-class UserViewTest(TestCase):
-    def setUp(self):
-        self.client = Client()
-        self.user = User.objects.create_user(
-            email='testuser@test.com',
-            password='testpassword',
-            first_name='Test',
-            last_name='User',
-            role='TA'
-        )
-
-    def test_user_create_view(self):
-        self.client.login(email='testuser@test.com', password='testpassword')
-        response = self.client.get(reverse('user_management:create_user'))
-        self.assertEqual(response.status_code, 200)
-
-    def test_user_update_view(self):
-        self.client.login(email='testuser@test.com', password='testpassword')
-        response = self.client.get(reverse('user_management:update_user', args=[self.user.id]))
-        self.assertEqual(response.status_code, 200)
-
-    def test_user_list_view(self):
-        self.client.login(email='testuser@test.com', password='testpassword')
-        response = self.client.get(reverse('user_management:user_list'))
-        self.assertEqual(response.status_code, 200)
-
-    def test_user_detail_view(self):
-        self.client.login(email='testuser@test.com', password='testpassword')
-        response = self.client.get(reverse('user_management:user_detail', args=[self.user.id]))
-        self.assertEqual(response.status_code, 200)
-
-    def test_password_change_view(self):
-        self.client.login(email='testuser@test.com', password='testpassword')
-        response = self.client.get(reverse('user_management:change_password'))
-        self.assertEqual(response.status_code, 200)
-
-    def test_send_email_view(self):
-        self.client.login(email='testuser@test.com', password='testpassword')
-        response = self.client.get(reverse('user_management:send_email'))
-        self.assertEqual(response.status_code, 200)
 
 
 class UserFormTest(TestCase):
@@ -271,3 +231,50 @@ class UserAdminTest(TestCase):
 
     def test_search_fields(self):
         self.assertEqual(self.admin.get_search_fields(request), ('email', 'first_name', 'last_name'))
+
+# UNIT TESTS END
+# ACCEPTANCE TESTS
+
+
+class UserViewTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(
+            email='testuser@test.com',
+            password='testpassword',
+            first_name='Test',
+            last_name='User',
+            role='TA'
+        )
+
+    def test_user_create_view(self):
+        self.client.login(email='testuser@test.com', password='testpassword')
+        response = self.client.get(reverse('user_management:create_user'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_user_update_view(self):
+        self.client.login(email='testuser@test.com', password='testpassword')
+        response = self.client.get(reverse('user_management:update_user', args=[self.user.id]))
+        self.assertEqual(response.status_code, 200)
+
+    def test_user_list_view(self):
+        self.client.login(email='testuser@test.com', password='testpassword')
+        response = self.client.get(reverse('user_management:user_list'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_user_detail_view(self):
+        self.client.login(email='testuser@test.com', password='testpassword')
+        response = self.client.get(reverse('user_management:user_detail', args=[self.user.id]))
+        self.assertEqual(response.status_code, 200)
+
+    def test_password_change_view(self):
+        self.client.login(email='testuser@test.com', password='testpassword')
+        response = self.client.get(reverse('user_management:change_password'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_send_email_view(self):
+        self.client.login(email='testuser@test.com', password='testpassword')
+        response = self.client.get(reverse('user_management:send_email'))
+        self.assertEqual(response.status_code, 200)
+
+# ACCEPTANCE TESTS END
