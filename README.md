@@ -27,7 +27,7 @@ For macOS and Linux
 Run the following commands in your terminal:
 
   ```
-  python3 -m venv env
+  python -m venv env
   source env/bin/activate
   ```
 You have to change the path for your specific case. As an example, this is how my command looks..
@@ -45,10 +45,6 @@ With your virtual environment activated, install the project dependencies using 
   ```
   pip install -r requirements.txt
   ```
-or
-  ```
-  pip3 install -r requirements.txt
-  ```
 
 This command reads the requirements.txt file in your project directory and installs all the necessary Python packages.
 
@@ -60,11 +56,6 @@ Run the following command to make migrations to your database. This step sets up
   python manage.py makemigrations
   python manage.py migrate
   ```
-or 
-  ```
-  python3 manage.py makemigrations
-  python3 manage.py migrate
-  ```
 
 ## Create an Admin User
 
@@ -72,10 +63,6 @@ To access the Django admin interface, you need to create a superuser account. Us
 
   ```
   python manage.py createsuperuser
-  ```
-or
-  ```
-  python3 manage.py createsuperuser
   ```
 
 Enter your desired username, email, and password when prompted.
@@ -86,10 +73,6 @@ Now you're ready to start the development server and see the project in action. 
 
   ```
   python manage.py runserver
-  ```
-or
-  ```
-  python3 manage.py runserver
   ```
 
 This command starts the Django development server. You can access your application by navigating to http://127.0.0.1:8000/ in your web browser.
