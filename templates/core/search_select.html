@@ -1,10 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<!-- search_select.html -->
+{% extends 'basic_generic.html' %}
 
-</body>
-</html>
+{% block content %}
+    <h2>What would you like to search?</h2>
+    <ul>
+        <li><a href="{% url 'user_management:user_list' %}">Users</a></li>
+        <li><a href="{% url 'lab_section_management:lab_section_list' %}">Lab Sections</a></li>
+        <li><a href="{% url 'course_management:course_list' %}">Courses</a></li>
+    </ul>
+{% endblock %}
