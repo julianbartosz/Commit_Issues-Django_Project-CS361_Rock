@@ -1,34 +1,26 @@
 <!-- user_list.html -->
 {% extends 'basic_generic.html' %}
 
-{% load static %}
-
 {% block content %}
-  <h2>User List</h2>
-  <form method="get">
-      <label>
-          <input type="text" name="search" value="{{ request.GET.search }}">
-      </label>
-      <input type="submit" value="Search">
-      <a href="{% url 'user_management:user_list' %}" class="button">Reset</a>
-  </form>
+    <h2>User List</h2>
+    <form method="get">
+        <label>
+            <input type="text" name="search" value="{{ request.GET.search }}">
+        </label>
+        <input type="submit" value="Search">
+        <a href="{% url 'user_management:user_list' %}" class="button">Reset</a>
+    </form>
   <ul>
     {% for user in users %}
       <li>
         <a href="{% url 'user_management:user_detail' pk=user.pk %}">{{ user.get_full_name }}</a>
         - {{ user.role }}
-          {% if request.user.is_superuser %}
-            - <a href="{% url 'user_management:update_user' user.id %}">Edit</a>
-          {% elif request.user.id == user.id %}
-            - <a href="{% url 'user_management:update_user' user.id %}">Edit</a>
+          {% if request.user.is_superuser or request.user.id == user.id %}
+            <a href="{% url 'user_management:update_user' user.id %}">Edit</a>
           {% endif %}
       </li>
     {% empty %}
       <li>No users found.</li>
     {% endfor %}
   </ul>
-{% endblock %}
-
-{% block extra_js %}
-<script src="{% static 'js/user_list.js' %}"></script>
 {% endblock %}

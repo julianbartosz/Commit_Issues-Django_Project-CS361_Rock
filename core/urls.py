@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from django.contrib.auth.views import LoginView, LogoutView
-from .forms import CustomAuthenticationForm
+from core.forms import CustomAuthenticationForm
 
 
 urlpatterns = [

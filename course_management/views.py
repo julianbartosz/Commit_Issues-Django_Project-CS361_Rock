@@ -1,9 +1,8 @@
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from .models import Course
-from .forms import CourseForm
-from lab_section_management.models import LabSection
+from course_management.models import Course, Section
+from course_management.forms import CourseForm, SectionForm
 from django.db.models import Q
 
 
@@ -14,7 +13,7 @@ class CourseDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['lab_sections'] = LabSection.objects.filter(course=self.object)
+        context['sections'] = Section.objects.filter(course=self.object)
         return context
 
 
@@ -54,7 +53,6 @@ class CourseUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return reverse_lazy('course_management:course_detail', kwargs={'pk': self.object.pk})
 
     def test_func(self):
-        # Allow only supervisors or superusers to update courses
         return self.request.user.role == 'Supervisor' or self.request.user.is_superuser
 
 
@@ -64,5 +62,38 @@ class CourseDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     success_url = reverse_lazy('course_management:course_list')
 
     def test_func(self):
-        # Allow only supervisors to delete courses
+        return self.request.user.role == 'Supervisor' or self.request.user.is_superuser
+
+
+# New Section Views
+class SectionCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    model = Section
+    form_class = SectionForm
+    template_name = 'course_management/section_form.html'
+    success_url = reverse_lazy('course_management:course_list')
+
+    def test_func(self):
+        return self.request.user.role == 'Supervisor' or self.request.user.is_superuser
+
+
+class SectionUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Section
+    form_class = SectionForm
+    template_name = 'course_management/section_form.html'
+
+    def get_success_url(self):
+        return reverse_lazy('course_management:course_detail', kwargs={'pk': self.object.course.pk})
+
+    def test_func(self):
+        return self.request.user.role == 'Supervisor' or self.request.user.is_superuser
+
+
+class SectionDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Section
+    template_name = 'course_management/section_confirm_delete.html'
+
+    def get_success_url(self):
+        return reverse_lazy('course_management:course_detail', kwargs={'pk': self.object.course.pk})
+
+    def test_func(self):
         return self.request.user.role == 'Supervisor' or self.request.user.is_superuser

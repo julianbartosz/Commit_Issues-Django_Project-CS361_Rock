@@ -8,7 +8,7 @@ from django.contrib.auth import views as auth_views
 from django.contrib.admin.sites import AdminSite
 from user_management.admin import UserCreationForm, UserChangeForm, UserAdmin
 
-# UNIT TESTS
+
 
 
 class UserModelTest(TestCase):

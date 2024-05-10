@@ -1,12 +1,11 @@
-# admin.py
 from django.contrib import admin
-from .models import Course
+from course_management.models import Course, Section
 
 
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ('code', 'title', 'instructor_name', 'number_of_tas')
-    search_fields = ('code', 'title', 'instructor__username', 'tas__username')
-    list_filter = ('instructor', 'tas')
+    list_display = ('code', 'title')
+    search_fields = ('code', 'title')
+    list_filter = ()
 
     def instructor_name(self, obj):
         return obj.instructor.email if obj.instructor else 'No instructor assigned'
@@ -19,4 +18,16 @@ class CourseAdmin(admin.ModelAdmin):
     number_of_tas.short_description = 'Number of TAs'
 
 
+class SectionAdmin(admin.ModelAdmin):
+    list_display = ('course', 'number', 'section_type', 'campus', 'start_date', 'end_date', 'credits')
+    search_fields = ('course__code', 'number', 'section_type', 'campus')
+    list_filter = ('section_type', 'campus', 'start_date', 'end_date')
+
+    def course_code(self, obj):
+        return obj.course.code
+
+    course_code.short_description = 'Course Code'
+
+
 admin.site.register(Course, CourseAdmin)
+admin.site.register(Section, SectionAdmin)

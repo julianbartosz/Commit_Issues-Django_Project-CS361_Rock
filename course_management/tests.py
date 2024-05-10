@@ -1,12 +1,14 @@
-from django.test import TestCase, RequestFactory
+from django.test import TestCase, RequestFactory, Client
 from course_management.models import Course
 from user_management.models import User
 from course_management.forms import CourseForm
-from django.contrib.auth.models import AnonymousUser
+from django.contrib.auth.models import AnonymousUser, Permission
 from django.urls import reverse, resolve
 from course_management.views import CourseDetailView, CourseListView, CourseCreateView, CourseUpdateView, CourseDeleteView
 from django.contrib.admin.sites import AdminSite
 from course_management.admin import CourseAdmin
+
+# UNIT TESTS
 
 
 class CourseModelTest(TestCase):
@@ -280,3 +282,54 @@ class CourseAdminTest(TestCase):
 
     def test_number_of_tas(self):
         self.assertEqual(self.admin.number_of_tas(self.course), 2)
+
+# END OF UNIT TESTS
+# ACCEPTANCE TESTS
+
+
+class CourseManagementTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_superuser(email='test@test.com', password='testpassword', role='Instructor')
+        self.course = Course.objects.create(
+            code='101',
+            title='Intro to CS',
+            description='This is a test course.',
+            instructor=self.user,
+            semester='Fall',
+            year=2022
+        )
+
+    def test_course_list_view(self):
+        self.client.login(email='test@test.com', password='testpassword')
+        response = self.client.get(reverse('course_management:course_list'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '101')
+        self.assertQuerysetEqual(response.context['courses'], [str(self.course)], transform=str)
+
+    def test_course_create_view(self):
+        self.client.login(email='test@test.com', password='testpassword')
+        add_course_permission = Permission.objects.get(codename='add_course')
+        self.user.user_permissions.add(add_course_permission)
+        response = self.client.get(reverse('course_management:course_create'))
+        self.assertEqual(response.status_code, 200)
+        self.assertIsInstance(response.context['form'], CourseForm)
+
+    def test_course_update_view(self):
+        self.client.login(email='test@test.com', password='testpassword')
+        change_course_permission = Permission.objects.get(codename='change_course')
+        self.user.user_permissions.add(change_course_permission)
+        response = self.client.get(reverse('course_management:course_update', args=[self.course.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertIsInstance(response.context['form'], CourseForm)
+        self.assertEqual(response.context['course'], self.course)
+
+    def test_course_delete_view(self):
+        self.client.login(email='test@test.com', password='testpassword')
+        delete_course_permission = Permission.objects.get(codename='delete_course')
+        self.user.user_permissions.add(delete_course_permission)
+        response = self.client.get(reverse('course_management:course_delete', args=[self.course.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['course'], self.course)
+
+# ACCEPTANCE TESTS END

@@ -1,14 +1,14 @@
 {% extends 'basic_generic.html' %}
 
 {% block content %}
-<h2>Lab Section List</h2>
-<form method="get">
-    <label>
-        <input type="text" name="search" value="{{ request.GET.search }}">
-    </label>
-    <input type="submit" value="Search">
-    <a href="{% url 'lab_section_management:lab_section_list' %}" class="button">Reset</a>
-</form>
+    <h2>Lab Section List</h2>
+    <form method="get">
+        <label>
+            <input type="text" name="search" value="{{ request.GET.search }}">
+        </label>
+        <input type="submit" value="Search">
+        <a href="{% url 'lab_section_management:lab_section_list' %}" class="button">Reset</a>
+    </form>
 <ul>
     {% for lab_section in lab_sections %}
     <li>

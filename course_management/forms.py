@@ -1,13 +1,12 @@
-# forms.py
 from django import forms
-from .models import Course
+from .models import Course, Section
 from user_management.models import User
 
 
 class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
-        fields = ['code', 'title', 'description', 'instructor', 'tas', 'semester', 'year']
+        fields = ['code', 'title']  # replace 'description' with 'description_html'
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4, 'cols': 40}),
             'tas': forms.SelectMultiple(attrs={'size': 8}),
@@ -29,3 +28,21 @@ class CourseForm(forms.ModelForm):
         if not code.isalnum():
             raise forms.ValidationError('Course code must be alphanumeric.')
         return code
+
+
+class SectionForm(forms.ModelForm):
+    semester = forms.CharField(max_length=20)
+    year = forms.IntegerField()
+
+    class Meta:
+        model = Section
+        fields = ['course', 'number', 'section_type', 'campus', 'start_date', 'end_date', 'credits', 'semester', 'year']
+        widgets = {
+            'meeting_html': forms.TextInput(attrs={'placeholder': 'e.g., MW 9:00-10:15'}),
+            'start_date': forms.DateInput(attrs={'type': 'date'}),
+            'end_date': forms.DateInput(attrs={'type': 'date'}),
+        }
+        help_texts = {
+            'course': 'Select the associated course.',
+            'number': 'Enter the section number.',
+        }

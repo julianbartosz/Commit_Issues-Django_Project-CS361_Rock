@@ -12,7 +12,7 @@
 <ul>
     {% for course in courses %}
     <li>
-        <a href="{% url 'course_management:course_detail' course.id %}">{{ course.title }}</a>
+        <a href="{% url 'course_management:course_detail' course.id %}">{{ course.code }} {{ course.title }}</a>
         - {{ course.instructor.get_full_name }} - ({{ course.semester }} {{ course.year }})
         {% if request.user.role == 'Supervisor' or request.user.is_superuser %}
             <a href="{% url 'course_management:course_update' course.id %}">Edit</a>

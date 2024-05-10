@@ -1,10 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'basic_generic.html' %}
 
-</body>
-</html>
+{% block title %}Welcome to TA Scheduler{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Hero Section -->
+    <div class="jumbotron bg-white shadow-sm rounded">
+        <h1 class="display-4">Welcome to TA Scheduler</h1>
+        <p class="lead"></p>
+        {% if user.is_authenticated %}
+            <p>Hello, {{ user.get_full_name }}! Ready to manage your academic responsibilities?</p>
+            {% if user.role == 'Supervisor' %}
+                <a href="{% url 'course_management:course_list' %}" class="btn btn-primary btn-lg" role="button">View Courses</a>
+                <a href="{% url 'lab_section_management:lab_section_list' %}" class="btn btn-secondary btn-lg" role="button">View Lab Sections</a>
+                <a href="{% url 'user_management:user_list' %}" class="btn btn-info btn-lg" role="button">Manage Users</a>
+            {% elif user.role == 'Instructor' %}
+                <a href="{% url 'course_management:course_list' %}" class="btn btn-primary btn-lg" role="button">My Courses</a>
+                <a href="{% url 'lab_section_management:lab_section_list' %}" class="btn btn-secondary btn-lg" role="button">My Lab Sections</a>
+                <a href="{% url 'user_management:user_list' %}" class="btn btn-info btn-lg" role="button">Users</a>
+            {% elif user.role == 'TA' %}
+                <a href="{% url 'course_management:course_list' %}" class="btn btn-primary btn-lg" role="button">Courses</a>
+                <a href="{% url 'lab_section_management:lab_section_list' %}" class="btn btn-secondary btn-lg" role="button">My Lab Assignments</a>
+                <a href="{% url 'user_management:user_list' %}" class="btn btn-info btn-lg" role="button">Users</a>
+            {% endif %}
+        {% else %}
+            <hr class="my-4">
+            <p>Sign in to access your dashboard and start managing or participating in academic activities.</p>
+            <p class="lead">
+                <a href="{% url 'login' %}" class="btn btn-primary btn-lg" role="button">Login</a>
+            </p>
+        {% endif %}
+    </div>
+
+    <!-- Info Section for Public -->
+    {% if not user.is_authenticated %}
+    {% endif %}
+</div>
+{% endblock %}
