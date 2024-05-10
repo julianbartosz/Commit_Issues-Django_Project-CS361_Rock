@@ -1,4 +1,3 @@
-<!-- Navigation bar using Bootstrap's navbar component -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'home' %}">TA Scheduler</a>
@@ -6,7 +5,7 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
+            <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'home' %}">Home</a>
                 </li>
@@ -18,19 +17,26 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'admin:index' %}">Access Admin Dashboard</a>
                         </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Quick Create
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="{% url 'user_management:create_user' %}">Create User</a></li>
+                                <li><a class="dropdown-item" href="{% url 'lab_section_management:lab_section_create' %}">Create Lab Section</a></li>
+                                <li><a class="dropdown-item" href="{% url 'course_management:course_create' %}">Create Course</a></li>
+                            </ul>
+                        </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'user_management:create_user' %}">Create Account</a>
+                            <a href="{% url 'user_management:send_email' %}">Send Email</a>
+                        </li>
+                        <li class="nav-item">
+                            <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-link" style="text-decoration: none; color: inherit; background: none; border: none; padding: 0; font: inherit; cursor: pointer;">Logout</button>
+                            </form>
                         </li>
                     {% endif %}
-                    <li class="nav-item">
-                        <a href="{% url 'user_management:send_email' %}">Send Email</a>
-                    </li>
-                    <li class="nav-item">
-                        <form action="{% url 'logout' %}" method="post" style="display: inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-link" style="text-decoration: none; color: inherit; background: none; border: none; padding: 0; font: inherit; cursor: pointer;">Logout</button>
-                        </form>
-                    </li>
                 {% else %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'login' %}">Login</a>
