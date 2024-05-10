@@ -13,7 +13,7 @@ class CustomUserCreationForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super(CustomUserCreationForm, self).__init__(*args, **kwargs)
         self.fields['email'].required = True
-        self.fields['role'].choices = [('Teaching Assistant', 'Teaching Assistant'), ('Instructor', 'Instructor')]
+        self.fields['role'].choices = [('TA', 'Teaching Assistant'), ('Instructor', 'Instructor')]
 
 
 class CustomUserUpdateForm(UserChangeForm):

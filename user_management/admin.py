@@ -1,7 +1,7 @@
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django import forms
-from .models import User
+from user_management.models import User
 from django.contrib import admin
 from django.contrib.auth.models import Group
 
@@ -14,7 +14,7 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('email', 'first_name', 'last_name', 'role', 'phone', 'address')
+        fields = ('email', 'first_name', 'last_name', 'role', 'phone', 'address', 'is_active')
 
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")
@@ -34,7 +34,8 @@ class UserCreationForm(forms.ModelForm):
 class UserChangeForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ('email', 'first_name', 'last_name', 'is_active', 'is_superuser', 'role', 'phone', 'address')
+        fields = ('email', 'first_name', 'last_name', 'is_active', 'role', 'phone', 'address')
+        exclude = ('is_superuser',)
 
 
 class UserAdmin(BaseUserAdmin):
@@ -43,9 +44,8 @@ class UserAdmin(BaseUserAdmin):
     list_display = ('email', 'first_name', 'last_name', 'role', 'is_active')
     list_filter = ('is_active', 'role')
     fieldsets = (
-        (None, {'fields': ('email',)}),
+        (None, {'fields': ('email', 'is_active')}),
         ('Personal info', {'fields': ('first_name', 'last_name', 'role', 'phone', 'address')}),
-        ('Permissions', {'fields': ('is_superuser',)}),
     )
     add_fieldsets = (
         (None, {
@@ -56,6 +56,12 @@ class UserAdmin(BaseUserAdmin):
     search_fields = ('email', 'first_name', 'last_name')
     ordering = ('email',)
     filter_horizontal = ()
+
+    def get_form(self, request, obj=None, **kwargs):
+        if obj is None:
+            return UserCreationForm
+        else:
+            return UserChangeForm
 
 
 admin.site.register(User, UserAdmin)
