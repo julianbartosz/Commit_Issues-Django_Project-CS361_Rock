@@ -1,7 +1,7 @@
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, ListView, DetailView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from .forms import CustomUserCreationForm, CustomUserUpdateForm, CustomPasswordChangeForm, EmailForm
+from user_management.forms import CustomUserCreationForm, CustomUserUpdateForm, CustomPasswordChangeForm, EmailForm
 from user_management.models import User
 from django.core.mail import send_mail
 from django.db.models import Q, Count
@@ -32,22 +32,10 @@ class UserListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     def get_queryset(self):
         queryset = super().get_queryset()
 
-        # Get the query parameters
-        role = self.request.GET.get('role')
-        department = self.request.GET.get('department')
-        num_lab_sections = self.request.GET.get('num_lab_sections')
-        sort_order = self.request.GET.get('sort_order')
+        search_query = self.request.GET.get('search', '')
 
-        # Apply the filters
-        if role:
-            queryset = queryset.filter(role=role)
-        if department:
-            queryset = queryset.filter(department=department)
-        if num_lab_sections:
-            queryset = queryset.annotate(num_lab_sections=Count('lab_sections')).filter(
-                num_lab_sections=num_lab_sections)
-        if sort_order == 'alphabetical':
-            queryset = queryset.order_by('name')
+        if search_query:
+            queryset = queryset.filter(Q(first_name__icontains=search_query) | Q(last_name__icontains=search_query))
 
         return queryset
 

@@ -27,8 +27,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'user_management.apps.UserManagementConfig',
     'course_management.apps.CourseManagementConfig',
-    # 'lab_section_management.apps.LabSectionManagementConfig',
-    'lab_section_management.apps.LabSectionConfig',
+    'lab_section_management.apps.LabSectionManagementConfig',
+    #'lab_section_management.apps.LabSectionConfig',
     'core.apps.CoreConfig',
     'django_extensions',
 ]
