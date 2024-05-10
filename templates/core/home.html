@@ -7,7 +7,7 @@
     <!-- Hero Section -->
     <div class="jumbotron bg-white shadow-sm rounded">
         <h1 class="display-4">Welcome to TA Scheduler</h1>
-        <p class="lead">Streamline the management of courses and lab sections effortlessly.</p>
+        <p class="lead"></p>
         {% if user.is_authenticated %}
             <p>Hello, {{ user.get_full_name }}! Ready to manage your academic responsibilities?</p>
             {% if user.role == 'Supervisor' %}

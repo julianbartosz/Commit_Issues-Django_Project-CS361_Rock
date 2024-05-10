@@ -3,7 +3,6 @@ from django.test import TestCase, SimpleTestCase, Client
 from django.contrib.admin.sites import AdminSite
 from lab_section_management.admin import LabSectionAdmin
 from lab_section_management.models import LabSection
-from lab_section_management.forms import LabSectionForm
 from lab_section_management.views import LabSectionListView, LabSectionCreateView, LabSectionDetailView, LabSectionUpdateView, LabSectionDeleteView
 from course_management.models import Course
 from user_management.models import User
