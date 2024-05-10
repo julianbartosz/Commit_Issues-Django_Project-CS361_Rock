@@ -1,10 +1,10 @@
-#tfrom django.db.models import Q
+from django.db.models import Q
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import permission_required
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
-from .models import LabSection
-from .forms import LabSectionForm
+from lab_section_management.models import LabSection
+from lab_section_management.forms import LabSectionForm
 
 
 class LabSectionListView(LoginRequiredMixin, ListView):
